@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Exercices sur les Gammes Majeures</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Bienvenue aux Exercices sur les Gammes Majeures</h1>
+    <div id="mode-selection">
+        <h2>Choisissez un mode :</h2>
+        <button onclick="document.getElementById('exercise-selection').style.display='block'">Exercices</button>
+        <button onclick="alert('En cours de réalisation')">Tutoriels</button>
+        <button onclick="alert('En cours de réalisation')">Défis</button>
+    </div>
+
+    <div id="exercise-selection" style="display: none;">
+        <h2>Choisissez un ou plusieurs types d'exercices :</h2>
+        <form id="exercise-form">
+            <label>
+                <input type="checkbox" name="exercise" value="sharps"> Trouver la gamme à partir des dièses
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" name="exercise" value="flats"> Trouver la gamme à partir des bémols
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" name="exercise" value="scaleName"> Trouver les altérations à partir du nom de la gamme
+            </label>
+            <br>
+            <button type="button" onclick="startExercise()">Commencer l'exercice</button>
+        </form>
+    </div>
+
+    <script>
+        function startExercise() {
+            const form = document.getElementById('exercise-form');
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedExercises = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+            if (selectedExercises) {
+                window.location.href = `exercises.html?types=${selectedExercises}`;
+            } else {
+                alert('Veuillez sélectionner au moins un type d\'exercice.');
+            }
+        }
+    </script>
+</body>
+</html>
