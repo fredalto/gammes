@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification 2 - Tutoriel sur les Armures</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Vérification 2</h1>
+        <p>Si la tonique est Sol, quel est le dernier dièse à la clé ?</p>
+        <div class="button-container">
+            <button onclick="checkAnswer('Fa#')">Fa#</button>
+            <button onclick="checkAnswer('Do#')">Do#</button>
+            <button onclick="checkAnswer('Sol#')">Sol#</button>
+            <button onclick="checkAnswer('Ré#')">Ré#</button>
+            <button onclick="checkAnswer('La#')">La#</button>
+        </div>
+        <p id="feedback"></p>
+    </div>
+    <script>
+        function checkAnswer(answer) {
+            const feedbackElement = document.getElementById('feedback');
+            if (answer === 'Fa#') {
+                feedbackElement.innerHTML = '<span class="correct">✓</span>';
+                setTimeout(() => {
+                    window.location.href = 'tutorial_step3.html';
+                }, 1000);
+            } else {
+                feedbackElement.innerHTML = '<span class="incorrect">✗</span>';
+                setTimeout(() => {
+                    window.location.href = 'tutorial_step2.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

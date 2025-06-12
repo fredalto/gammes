@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification 1 - Tutoriel sur les Armures</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Vérification 1</h1>
+        <p>Si il y a un bémol à la clé, dans quelle tonalité sommes-nous ?</p>
+        <div class="button-container">
+            <button class="green-button" onclick="checkAnswer('Fa Majeur')">Fa Majeur</button>
+            <button class="green-button" onclick="checkAnswer('Do Majeur')">Do Majeur</button>
+        </div>
+        <p id="feedback"></p>
+    </div>
+    <script>
+        function checkAnswer(answer) {
+            const feedbackElement = document.getElementById('feedback');
+            if (answer === 'Fa Majeur') {
+                feedbackElement.innerHTML = '<span class="correct">✓</span>';
+                setTimeout(() => {
+                    window.location.href = 'tutorial_step2.html';
+                }, 1000);
+            } else {
+                feedbackElement.innerHTML = '<span class="incorrect">✗</span>';
+                setTimeout(() => {
+                    window.location.href = 'tutorial_step1.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
