@@ -40,117 +40,63 @@ const feedbackMessages = {
     ]
 };
 
-const params = new URLSearchParams(window.location.search);
-const exerciseTypes = params.get('types') ? params.get('types').split(',') : ['sharps'];
-
 function updateProgressBar() {
     const progressPercentage = (currentQuestion / totalQuestions) * 100;
     const progressBar = document.getElementById('progress-bar');
     progressBar.style.width = `${progressPercentage}%`;
-    progressBar.textContent = `${currentQuestion}/${totalQuestions}`;
+    progressBar.style.backgroundColor = 'green';
 }
 
 function showFeedback(isCorrect) {
     const feedbackElement = document.getElementById('feedback');
     const messages = isCorrect ? feedbackMessages.correct : feedbackMessages.incorrect;
-    const randomIndex = Math.floor(Math.random() * messages.length);
-
-    feedbackElement.textContent = messages[randomIndex];
-    feedbackElement.className = isCorrect ? 'correct' : 'incorrect';
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    feedbackElement.textContent = randomMessage;
+    feedbackElement.style.color = isCorrect ? 'green' : 'red';
 
     if (isCorrect) {
         score++;
     }
-
-    setTimeout(() => {
-        feedbackElement.textContent = '';
-        feedbackElement.className = '';
-    }, 2000);
 }
 
 function generateExercise() {
-    const scales = Object.keys(majorScales);
+    const scaleNames = Object.keys(majorScales);
     let randomScale;
-    let questionKey;
-    let currentExerciseType = exerciseTypes[Math.floor(Math.random() * exerciseTypes.length)];
-
     do {
-        randomScale = scales[Math.floor(Math.random() * scales.length)];
-        const sharps = majorScales[randomScale].sharps;
-        const flats = majorScales[randomScale].flats;
+        randomScale = scaleNames[Math.floor(Math.random() * scaleNames.length)];
+    } while (askedQuestionsCount[randomScale] >= 2);
 
-        if (sharps > 0 && currentExerciseType === 'sharps') {
-            questionKey = `sharps-${randomScale}`;
-        } else if (flats > 0 && currentExerciseType === 'flats') {
-            questionKey = `flats-${randomScale}`;
-        } else if (currentExerciseType === 'scaleName') {
-            questionKey = `scaleName-${randomScale}`;
-        }
-    } while (questionKey === lastQuestionKey);
+    askedQuestionsCount[randomScale] = (askedQuestionsCount[randomScale] || 0) + 1;
+    lastQuestionKey = randomScale;
 
-    askedQuestionsCount[questionKey] = (askedQuestionsCount[questionKey] || 0) + 1;
-    lastQuestionKey = questionKey;
-
+    const { sharps, flats } = majorScales[randomScale];
     let questionText, correctAnswer, options;
 
-    const sharps = majorScales[randomScale].sharps;
-    const flats = majorScales[randomScale].flats;
-
-    if (currentExerciseType === 'sharps') {
-        if (sharps > 0) {
-            questionText = `Quelle est la gamme majeure avec ${sharps} dièse${sharps > 1 ? 's' : ''} ?`;
-            correctAnswer = randomScale;
-            options = [randomScale];
-            while (options.length < 4) {
-                const randomOption = scales[Math.floor(Math.random() * scales.length)];
-                if (!options.includes(randomOption) && majorScales[randomOption].sharps > 0) {
-                    options.push(randomOption);
-                }
-            }
-        } else {
-            questionText = `Quelle est la gamme majeure sans altération ?`;
-            correctAnswer = "Do majeur";
-            options = ["Do majeur"];
-            while (options.length < 4) {
-                const randomOption = scales[Math.floor(Math.random() * scales.length)];
-                if (!options.includes(randomOption) && majorScales[randomOption].sharps === 0) {
-                    options.push(randomOption);
-                }
+    if (sharps > 0) {
+        questionText = `Combien de dièses dans la gamme ${randomScale} ?`;
+        correctAnswer = `${sharps} dièse${sharps > 1 ? 's' : ''}`;
+        options = [correctAnswer];
+        while (options.length < 4) {
+            const randomOption = Math.floor(Math.random() * 7) + 1;
+            const randomOptionText = `${randomOption} dièse${randomOption > 1 ? 's' : ''}`;
+            if (!options.includes(randomOptionText)) {
+                options.push(randomOptionText);
             }
         }
-    } else if (currentExerciseType === 'flats') {
-        if (flats > 0) {
-            questionText = `Quelle est la gamme majeure avec ${flats} bémol${flats > 1 ? 's' : ''} ?`;
-            correctAnswer = randomScale;
-            options = [randomScale];
-            while (options.length < 4) {
-                const randomOption = scales[Math.floor(Math.random() * scales.length)];
-                if (!options.includes(randomOption) && majorScales[randomOption].flats > 0) {
-                    options.push(randomOption);
-                }
-            }
-        } else {
-            questionText = `Quelle est la gamme majeure sans altération ?`;
-            correctAnswer = "Do majeur";
-            options = ["Do majeur"];
-            while (options.length < 4) {
-                const randomOption = scales[Math.floor(Math.random() * scales.length)];
-                if (!options.includes(randomOption) && majorScales[randomOption].flats === 0) {
-                    options.push(randomOption);
-                }
+    } else if (flats > 0) {
+        questionText = `Combien de bémols dans la gamme ${randomScale} ?`;
+        correctAnswer = `${flats} bémol${flats > 1 ? 's' : ''}`;
+        options = [correctAnswer];
+        while (options.length < 4) {
+            const randomOption = Math.floor(Math.random() * 7) + 1;
+            const randomOptionText = `${randomOption} bémol${randomOption > 1 ? 's' : ''}`;
+            if (!options.includes(randomOptionText)) {
+                options.push(randomOptionText);
             }
         }
-    } else if (currentExerciseType === 'scaleName') {
-        if (sharps > 0) {
-            questionText = `Quelles sont les altérations de la gamme ${randomScale} ?`;
-            correctAnswer = `${sharps} dièse${sharps > 1 ? 's' : ''}`;
-        } else if (flats > 0) {
-            questionText = `Quelles sont les altérations de la gamme ${randomScale} ?`;
-            correctAnswer = `${flats} bémol${flats > 1 ? 's' : ''}`;
-        } else {
-            questionText = `Quelles sont les altérations de la gamme ${randomScale} ?`;
-            correctAnswer = `Aucune altération`;
-        }
+    } else {
+        questionText = `Quelles sont les altérations de la gamme ${randomScale} ?`;
+        correctAnswer = `Aucune altération`;
         options = [correctAnswer];
         while (options.length < 4) {
             const randomOption = Math.floor(Math.random() * 7) + 1;
